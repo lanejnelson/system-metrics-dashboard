@@ -6,6 +6,7 @@ const LogDisplay = ({logs}) => {
         <table>
             <thead>
                 <tr>
+                    <th>Timestamp</th>
                     <th>Hostname</th>
                     <th>Operating System</th>
                     <th>CPU Usage</th>
@@ -16,6 +17,7 @@ const LogDisplay = ({logs}) => {
             <tbody>
                 {logs.map((log) => (
                     <tr key={log.id}>
+                        <td>{log.timestamp}</td>
                         <td>{log.hostname}</td>
                         <td>{log.operatingSys}</td>
                         <td>{log.cpuUsage}%</td>

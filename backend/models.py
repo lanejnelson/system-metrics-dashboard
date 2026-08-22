@@ -2,6 +2,7 @@ from config import db
 
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.Integer, unique=False, nullable=False)
     hostname = db.Column(db.String(80), unique=False, nullable=False)
     operating_sys = db.Column(db.String(80), unique=False, nullable=False)
     cpu_usage = db.Column(db.Integer, unique=False, nullable=False)
@@ -12,6 +13,7 @@ class Log(db.Model):
     def to_json(self):
         return {
             "id": self.id,
+            "timestamp": self.timestamp,
             "hostname": self.hostname,
             "operatingSys": self.operating_sys,
             "cpuUsage": self.cpu_usage,

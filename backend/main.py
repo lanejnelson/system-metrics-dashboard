@@ -13,13 +13,15 @@ def get_last_logs():
     # show only last 3 queries
     stmt = db.select(Log).order_by(Log.id.desc()).limit(3)
     last_three_logs = db.session.scalars(stmt).all()
-    print(stmt)
+    #print(stmt)
     json_logs = list(map(lambda x: x.to_json(), last_three_logs))
+    #print(json_logs)
     return jsonify({"logs": json_logs})
 
 @app.route('/send_metrics', methods=["POST"])
 def receive_metrics():
     print(request.json)
+    timestamp = request.json.get("timestamp")
     hostname = request.json.get("hostname")
     operating_sys = request.json.get("operatingSys")
     total_memory = request.json.get("totalMemory")
@@ -29,7 +31,7 @@ def receive_metrics():
     free_disk_space = request.json.get("freeDiskSpace")
     disk_usage = round(((disk_size - free_disk_space) / disk_size) * 100, 3)
     cpu_usage = request.json.get("cpuUsage")
-    new_log = Log(cpu_usage=cpu_usage, hostname=hostname, operating_sys=operating_sys, memory_usage=memory_usage, disk_usage=disk_usage)
+    new_log = Log(timestamp=timestamp, cpu_usage=cpu_usage, hostname=hostname, operating_sys=operating_sys, memory_usage=memory_usage, disk_usage=disk_usage)
     critical_events = detect_critical_events(new_log.to_json())
     if (critical_events):
         # send to Postgres
@@ -50,10 +52,11 @@ def receive_metrics():
 def detect_critical_events(metric: dict):
     critical_events = []
     print(metric)
-    for key in metric.keys():
+    for key, value in metric.items():
         # Check if metric is above 85% and add high_metric to list
-        if key != "id" and key != "hostname" and key != "operatingSys" and type(metric[key]) is not None and metric[key] > 85:
+        if value is not None and 'usage' in key.lower() and value > 85:
             critical_events.append("high_" + key)
+    #print(critical_events)
     return critical_events
 
 if __name__ == "__main__":
