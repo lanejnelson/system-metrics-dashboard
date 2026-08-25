@@ -1,5 +1,9 @@
 import React from "react"
 
+function formatTimestamp(id) {
+    return new Date(id * 1000).toLocaleString();
+}
+
 const LogDisplay = ({logs}) => {
     return <div>
         <h2>System Logs</h2>
@@ -17,7 +21,7 @@ const LogDisplay = ({logs}) => {
             <tbody>
                 {logs.map((log) => (
                     <tr key={log.id}>
-                        <td>{log.timestamp}</td>
+                        <td>{formatTimestamp(log.timestamp)}</td>
                         <td>{log.hostname}</td>
                         <td>{log.operatingSys}</td>
                         <td>{log.cpuUsage}%</td>
